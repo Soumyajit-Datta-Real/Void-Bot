@@ -1,17 +1,10 @@
-import discord
-from discord.ext import commands
+import discord, os, time, re, aiosqlite, datetime
+from discord.ext import commands, tasks
 from discord import app_commands
 from config import TOKEN
-import aiosqlite
-from database import DB
-from database import setup_database
-import os, time
-from discord.ext import tasks
-from datetime import datetime
-import re
+from database import DB, setup_database
 
 APPLICATION_CHANNEL_ID = 1474752560198979794
-PROOF_LOG_CHANNEL_ID = 1474752560198979794
 
 os.makedirs("data", exist_ok=True)
 intents = discord.Intents.default()
@@ -56,7 +49,7 @@ async def build_dashboard_embed():
         if now < start_ts:
             status = "⏳ Upcoming"
         elif now >= start_ts and now <= end_ts:
-            status = "� Live"
+            status = "🧿 Live"
         else:
             status = "✅ Ended"
         embed.add_field(
@@ -536,7 +529,7 @@ async def proof(
         await db.commit()
     import aiohttp
     import io
-    proof_log_channel = interaction.client.get_channel(PROOF_LOG_CHANNEL_ID)
+    proof_log_channel = interaction.client.get_channel(APPLICATION_CHANNEL_ID)
     if proof_log_channel:
         async with aiohttp.ClientSession() as session:
             async with session.get(screenshot.url) as resp:
